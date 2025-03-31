@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משפטים מעצימים</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166d9e;
+            --accent-color: #5ca0d5;
+            --light-color: #e8f4fc;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --happy-color: #f1c40f;
+            --sad-color: #3498db;
+            --angry-color: #e74c3c;
+            --anxious-color: #9b59b6;
+            --tired-color: #95a5a6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--light-color), #ffffff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .welcome-screen, .emotion-screen, .quote-screen {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: var(--dark-color);
+            margin-bottom: 25px;
+            font-size: 2rem;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        p {
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            text-align: right;
+        }
+        
+        input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        button i {
+            margin-left: 10px;
+        }
+        
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .emotion-option {
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .emotion-option i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .emotion-option.selected {
+            border-color: var(--accent-color);
+            background-color: var(--light-color);
+        }
+        
+        .emotion-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .happy { color: var(--happy-color); }
+        .sad { color: var(--sad-color); }
+        .angry { color: var(--angry-color); }
+        .anxious { color: var(--anxious-color); }
+        .tired { color: var(--tired-color); }
+        .success { color: var(--success-color); }
+        
+        .quote-content {
+            background-color: var(--light-color);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            font-size: 1.1rem;
+        }
+        
+        .quote-content:before {
+            content: '"';
+            font-size: 5rem;
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .quote-author {
+            font-style: italic;
+            text-align: left;
+            margin-top: 10px;
+            color: var(--dark-color);
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* מסכים קטנים */
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 15px;
+            }
+            
+            .emotion-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+            }
+        }
+        
+        /* אנימציות */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- מסך קבלת פנים -->
+    <div class="container fade-in" id="welcome-screen">
+        <div class="welcome-screen">
+            <h1>ברוכים הבאים</h1>
+            <p>בוא נגלה משפט מעצים שיעזור לך היום</p>
+            <input type="text" id="userName" placeholder="מה השם שלך?" required>
+            <button id="startButton"><i class="fas fa-arrow-left"></i> התחל </button>
+        </div>
+    </div>
+    
+    <!-- מסך בחירת רגש -->
+    <div class="container hidden" id="emotion-screen">
+        <div class="emotion-screen">
+            <h1>היי, <span id="userNameDisplay"></span></h1>
+            <h2>איך את/ה מרגיש/ה היום?</h2>
+            
+            <div class="emotion-grid">
+                <div class="emotion-option" data-emotion="happy">
+                    <i class="fas fa-smile happy"></i>
+                    <span>שמח/ה</span>
+                </div>
+                <div class="emotion-option" data-emotion="sad">
+                    <i class="fas fa-frown sad"></i>
+                    <span>עצוב/ה</span>
+                </div>
+                <div class="emotion-option" data-emotion="angry">
+                    <i class="fas fa-angry angry"></i>
+                    <span>כועס/ת</span>
+                </div>
+                <div class="emotion-option" data-emotion="anxious">
+                    <i class="fas fa-dizzy anxious"></i>
+                    <span>חרדה/דאגה</span>
+                </div>
+                <div class="emotion-option" data-emotion="tired">
+                    <i class="fas fa-tired tired"></i>
+                    <span>עייף/ה</span>
+                </div>
+                <div class="emotion-option" data-emotion="motivated">
+                    <i class="fas fa-bolt success"></i>
+                    <span>מוטיבציה</span>
+                </div>
+            </div>
+            
+            <button id="getQuoteButton" disabled><i class="fas fa-quote-right"></i> הראה לי משפט מעצים </button>
+        </div>
+    </div>
+    
+    <!-- מסך הצגת ציטוט -->
+    <div class="container hidden" id="quote-screen">
+        <div class="quote-screen">
+            <h1>הנה משפט מעצים עבורך</h1>
+            <div class="quote-content">
+                <p id="quoteText"></p>
+                <div class="quote-author" id="quoteAuthor"></div>
+            </div>
+            <div class="buttons-container">
+                <button id="newQuoteButton"><i class="fas fa-sync-alt"></i> משפט חדש </button>
+                <button id="backButton"><i class="fas fa-arrow-right"></i> חזרה </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // מאגר ציטוטים לפי רגשות
+            const quotes = {
+                happy: [
+                    { quote: "האושר הוא הרגשת שמחה שצומחת מבפנים, ככל שתשתף אחרים באושר שלך הוא רק יגדל.", author: "אלברט איינשטיין" },
+                    { quote: "אתה לא מוצא את האושר, אתה יוצר אותו.", author: "דלאי לאמה" },
+                    { quote: "חייך לעולם והעולם יחייך בחזרה אליך.", author: "ברטראנד ראסל" }
+                ],
+                sad: [
+                    { quote: "אפילו הלילה האפל ביותר יסתיים והשמש תזרח.", author: "ויקטור הוגו" },
+                    { quote: "כשאתה מרגיש שהכל אבוד, זכור שהבוקר תמיד מביא אור חדש.", author: "גתה" },
+                    { quote: "העצב הוא חלק מהחיים, אך הוא לא צריך להגדיר את כל החיים שלך.", author: "אלבר קאמי" }
+                ],
+                angry: [
+                    { quote: "הכעס הוא חומצה שגורמת נזק רב יותר לכלי שמכיל אותה מאשר לאובייקט שעליו היא נשפכת.", author: "מרק טוויין" },
+                    { quote: "לכעוס זה כמו לשתות רעל ולצפות שהאדם השני ימות.", author: "בודהה" },
+                    { quote: "תאר לעצמך שכל מי שאתה פוגש נמצא בקרב קשה שאתה לא יודע עליו. זה יגרום לך להיות סובלני יותר.", author: "פלאטו" }
+                ],
+                anxious: [
+                    { quote: "הדאגה לא מרוקנת את המחר מצערו, היא רק מרוקנת את היום מכוחו.", author: "קורי טן בום" },
+                    { quote: "נשימה עמוקה אחת יכולה לשנות הכל.", author: "אופרה ווינפרי" },
+                    { quote: "אל תניח שיש צרות מחר, יכול להיות שהצרות של מחר לא יהיו הצרות שלך.", author: "מכלוף ברלין" }
+                ],
+                tired: [
+                    { quote: "מנוחה כשאתה עייף, ורעננות כשאתה רענן, תשנה את חייך.", author: "רבי שלמה מקרלין" },
+                    { quote: "אנשים חזקים יודעים מתי לנוח.", author: "ויליאם ארתור וורד" },
+                    { quote: "העייפות באה מנשיאת עול. הכוח בא מההשלמה עם אתגרי החיים.", author: "רבי נחמן מברסלב" }
+                ],
+                motivated: [
+                    { quote: "הדרך הטובה ביותר לחזות את העתיד היא ליצור אותו.", author: "אברהם לינקולן" },
+                    { quote: "אל תחכה. הזמן לא יהיה מתאים אף פעם. התחל היכן שאתה עומד, והשתמש במה שיש לך.", author: "נפוליאון היל" },
+                    { quote: "השאלה אינה מי יאפשר לי, אלא מי יעצור אותי?", author: "איין ראנד" }
+                ]
+            };
+
+            // אלמנטים מרכזיים
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const emotionScreen = document.getElementById('emotion-screen');
+            const quoteScreen = document.getElementById('quote-screen');
+            const userNameInput = document.getElementById('userName');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const startButton = document.getElementById('startButton');
+            const getQuoteButton = document.getElementById('getQuoteButton');
+            const emotionOptions = document.querySelectorAll('.emotion-option');
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+            const newQuoteButton = document.getElementById('newQuoteButton');
+            const backButton = document.getElementById('backButton');
+            
+            let selectedEmotion = null;
+            let userName = '';
+            let currentQuoteIndex = 0;
+            
+            // אירועים
+            startButton.addEventListener('click', function() {
+                userName = userNameInput.value.trim();
+                
+                if (userName === '') {
+                    userNameInput.style.borderColor = 'red';
+                    return;
+                }
+                
+                userNameDisplay.textContent = userName;
+                welcomeScreen.classList.add('hidden');
+                emotionScreen.classList.remove('hidden');
+            });
+            
+            userNameInput.addEventListener('input', function() {
+                this.style.borderColor = this.value.trim() !== '' ? '#ddd' : 'red';
+            });
+            
+            emotionOptions.forEach(function(option) {
+                option.addEventListener('click', function() {
+                    emotionOptions.forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedEmotion = this.getAttribute('data-emotion');
+                    getQuoteButton.removeAttribute('disabled');
+                });
+            });
+            
+            getQuoteButton.addEventListener('click', function() {
+                if (!selectedEmotion) return;
+                
+                displayRandomQuote();
+                emotionScreen.classList.add('hidden');
+                quoteScreen.classList.remove('hidden');
+            });
+            
+            newQuoteButton.addEventListener('click', function() {
+                displayRandomQuote();
+            });
+            
+            backButton.addEventListener('click', function() {
+                quoteScreen.classList.add('hidden');
+                emotionScreen.classList.remove('hidden');
+                emotionOptions.forEach(o => o.classList.remove('selected'));
+                getQuoteButton.setAttribute('disabled', true);
+                selectedEmotion = null;
+            });
+            
+            // פונקציות
+            function displayRandomQuote() {
+                const emotionQuotes = quotes[selectedEmotion];
+                // אינדקס אקראי שהוא לא האינדקס הנוכחי
+                let newIndex;
+                
+                do {
+                    newIndex = Math.floor(Math.random() * emotionQuotes.length);
+                } while (emotionQuotes.length > 1 && newIndex === currentQuoteIndex);
+                
+                currentQuoteIndex = newIndex;
+                const quote = emotionQuotes[currentQuoteIndex];
+                
+                quoteText.textContent = quote.quote;
+                quoteAuthor.textContent = "— " + quote.author;
+                
+                // אנימציה לציטוט החדש
+                const quoteContent = document.querySelector('.quote-content');
+                quoteContent.style.opacity = 0;
+                
+                setTimeout(() => {
+                    quoteContent.style.opacity = 1;
+                    quoteContent.style.transition = 'opacity 0.5s ease';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
