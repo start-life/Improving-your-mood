@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>משפטי חיזוק</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="icon.png" type="image/x-icon">
+	<link rel="icon" href="icon.png" type="image/x-icon">
     <!-- תגי Open Graph עבור תצוגה מקדימה ברשתות חברתיות -->
     <meta property="og:title" content="משפטי חיזוק - קבל השראה יומית">
     <meta property="og:description" content="קבלו מנה יומית של השראה וחיזוק! אתר זה מספק משפטים מעצימים לפי מצב הרוח שלכם - שמח, עצוב, לחוץ, עייף ועוד. התחילו את היום בגישה חיובית!">
@@ -45,7 +45,7 @@
 
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 800px; /* Increased from 500px to 800px */
             margin: 0 auto;
             perspective: 1000px;
         }
@@ -155,7 +155,7 @@
 
         .emotion-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr); /* Changed from 2 to 4 columns for desktop */
             gap: 1rem;
             margin-top: 1.5rem;
         }
@@ -286,6 +286,100 @@
             animation: fadeIn 0.6s ease forwards;
         }
 
+        .welcome-message {
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .returning-user-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        /* Daily Quote Styles - Updated */
+        .daily-quote-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 1.8rem;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+        
+        .daily-quote-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 30%;
+            width: 70%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            border-radius: 0 0 10px 10px;
+        }
+
+        .daily-quote-container {
+            padding: 1.5rem;
+            background-color: #f0f7ff;
+            border-radius: 12px;
+            position: relative;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .daily-quote-container::before {
+            content: '\201C';
+            font-size: 4rem;
+            position: absolute;
+            left: 10px;
+            top: -20px;
+            color: var(--primary-light);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .daily-quote-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .daily-quote-text {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+
+        .daily-quote-author {
+            font-style: italic;
+            color: #6c757d;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 500px; /* Return to original width on mobile */
+            }
+            
+            .emotion-grid {
+                grid-template-columns: repeat(2, 1fr); /* Return to 2 columns on mobile */
+            }
+        }
+
         @media (max-width: 640px) {
             .card {
                 padding: 1.8rem;
@@ -296,12 +390,12 @@
                 font-size: 1.7rem;
             }
 
-            .emotion-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .quote {
                 font-size: 1.1rem;
+            }
+            
+            .daily-quote-text {
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -324,20 +418,49 @@
             <h1>ברוכים הבאים</h1>
             <p>אנו מזמינים אותך לחוויה של חיזוק והשראה אישית</p>
             
-            <div class="progress-bar">
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
+            <div id="new-user-content">
+                <div class="progress-bar">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                </div>
+                
+                <div class="input-wrapper">
+                    <input type="text" id="name-input" placeholder="מה השם שלך?" autofocus required>
+                </div>
+                
+                <button id="name-next-btn">
+                    המשך
+                    <i class="fas fa-arrow-left"></i>
+                </button>
             </div>
             
-            <div class="input-wrapper">
-                <input type="text" id="name-input" placeholder="מה השם שלך?" autofocus>
+            <div id="returning-user-content" style="display: none;">
+                <div class="welcome-message" id="welcome-back-message"></div>
+                
+                <div class="returning-user-buttons">
+                    <button id="change-name-btn" class="btn-secondary">
+                        <i class="fas fa-edit"></i>
+                        שנה שם
+                    </button>
+                    <button id="continue-btn">
+                        המשך
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
             </div>
-            
-            <button id="name-next-btn">
-                המשך
-                <i class="fas fa-arrow-left"></i>
-            </button>
+        </div>
+
+        <!-- Daily Quote Card (independent) -->
+        <div class="daily-quote-card" id="daily-quote-card" style="display: none;">
+            <div class="daily-quote-title">
+                <i class="fas fa-star"></i>
+                ציטוט היום
+            </div>
+            <div class="daily-quote-container">
+                <div id="daily-quote" class="daily-quote-text"></div>
+                <div id="daily-quote-author" class="daily-quote-author"></div>
+            </div>
         </div>
 
         <!-- Emotion Selection Screen -->
@@ -431,15 +554,23 @@
     </div>
 
     <script src="quotes.js"></script>
+    <script src="daily-quotes.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
             const nameScreen = document.getElementById('name-screen');
             const emotionScreen = document.getElementById('emotion-screen');
             const quoteScreen = document.getElementById('quote-screen');
+            const dailyQuoteCard = document.getElementById('daily-quote-card');
             
             const nameInput = document.getElementById('name-input');
             const nameNextBtn = document.getElementById('name-next-btn');
+            
+            const newUserContent = document.getElementById('new-user-content');
+            const returningUserContent = document.getElementById('returning-user-content');
+            const welcomeBackMessage = document.getElementById('welcome-back-message');
+            const changeNameBtn = document.getElementById('change-name-btn');
+            const continueBtn = document.getElementById('continue-btn');
             
             const emotionItems = document.querySelectorAll('.emotion-item');
             const emotionBackBtn = document.getElementById('emotion-back-btn');
@@ -452,9 +583,30 @@
             const quoteBackBtn = document.getElementById('quote-back-btn');
             const refreshBtn = document.getElementById('refresh-btn');
             
+            const dailyQuoteElement = document.getElementById('daily-quote');
+            const dailyQuoteAuthorElement = document.getElementById('daily-quote-author');
+            
             // State
             let userName = '';
             let selectedEmotion = '';
+            
+            // Check for saved user name in localStorage
+            function checkForSavedUser() {
+                const savedName = localStorage.getItem('empowerment_user_name');
+                
+                if (savedName && savedName.trim() !== '') {
+                    // Show returning user content
+                    userName = savedName;
+                    newUserContent.style.display = 'none';
+                    returningUserContent.style.display = 'block';
+                    welcomeBackMessage.textContent = `ברוך השב, ${userName}!`;
+                } else {
+                    // Show new user content
+                    newUserContent.style.display = 'block';
+                    returningUserContent.style.display = 'none';
+                    nameInput.focus();
+                }
+            }
             
             // Functions
             function showScreen(screen) {
@@ -465,6 +617,13 @@
                 
                 // Show selected screen
                 screen.classList.add('active');
+                
+                // Show/hide daily quote card based on current screen
+                if (screen.id === 'emotion-screen') {
+                    dailyQuoteCard.style.display = 'block';
+                } else {
+                    dailyQuoteCard.style.display = 'none';
+                }
             }
             
             function updateProgressSteps(step) {
@@ -517,15 +676,67 @@
                 }, 300);
             }
             
+            // Generate Daily Quote
+            function generateDailyQuote() {
+                // Get the current date
+                const today = new Date();
+                const dateStr = today.toDateString();
+                
+                // Check if we already generated a quote today
+                const lastQuoteDate = localStorage.getItem('last_daily_quote_date');
+                let dailyQuoteIndex = parseInt(localStorage.getItem('daily_quote_index') || '0');
+                
+                // If it's a new day or we don't have a stored date, generate a new quote
+                if (dateStr !== lastQuoteDate) {
+                    // Move to next quote in the rotation
+                    dailyQuoteIndex = (dailyQuoteIndex + 1) % dailyQuotes.length;
+                    
+                    // Save the new index and date
+                    localStorage.setItem('daily_quote_index', dailyQuoteIndex);
+                    localStorage.setItem('last_daily_quote_date', dateStr);
+                }
+                
+                // Display the daily quote
+                const dailyQuote = dailyQuotes[dailyQuoteIndex];
+                dailyQuoteElement.textContent = dailyQuote.text;
+                dailyQuoteAuthorElement.textContent = `- ${dailyQuote.author}`;
+            }
+            
             // Event Listeners
             nameNextBtn.addEventListener('click', function() {
                 userName = nameInput.value.trim();
                 if (userName === '') {
-                    userName = 'חבר/ה';
+                    // Prevent proceeding if name is empty
+                    nameInput.focus();
+                    return; // Exit the function early
                 }
+                
+                // Save user name to localStorage
+                localStorage.setItem('empowerment_user_name', userName);
                 
                 showScreen(emotionScreen);
                 updateProgressSteps(2);
+                
+                // Generate daily quote when showing emotion screen
+                generateDailyQuote();
+            });
+            
+            // Change name button
+            changeNameBtn.addEventListener('click', function() {
+                newUserContent.style.display = 'block';
+                returningUserContent.style.display = 'none';
+                nameInput.value = userName;
+                nameInput.focus();
+                nameInput.select();
+            });
+            
+            // Continue button for returning users
+            continueBtn.addEventListener('click', function() {
+                showScreen(emotionScreen);
+                updateProgressSteps(2);
+                
+                // Generate daily quote when showing emotion screen
+                generateDailyQuote();
             });
             
             emotionItems.forEach(item => {
@@ -547,6 +758,7 @@
             emotionBackBtn.addEventListener('click', function() {
                 showScreen(nameScreen);
                 updateProgressSteps(1);
+                checkForSavedUser(); // Re-check for saved user when going back
             });
             
             emotionNextBtn.addEventListener('click', function() {
@@ -562,17 +774,17 @@
             
             refreshBtn.addEventListener('click', generateQuote);
             
-            // Initialize - make sure name screen is active
+            // Initialize
+            checkForSavedUser();
             showScreen(nameScreen);
             updateProgressSteps(1);
-            
-            // Auto-focus name input
-            nameInput.focus();
             
             // Allow pressing Enter to continue from name screen
             nameInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    nameNextBtn.click();
+                    if (nameInput.value.trim() !== '') {
+                        nameNextBtn.click();
+                    }
                 }
             });
         });
