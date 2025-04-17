@@ -285,6 +285,29 @@
         .fade-in {
             animation: fadeIn 0.6s ease forwards;
         }
+		
+		.assessment-button-container {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        #start-assessment-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #f0f7ff;
+            color: var(--primary-color);
+            border: 2px dashed var(--primary-color);
+            font-weight: 500;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        #start-assessment-btn:hover {
+            background-color: #e1efff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.15);
+        }
 
         .welcome-message {
             font-size: 1.4rem;
@@ -399,16 +422,6 @@
             }
         }
     </style>
-
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7VNSF2LE6G"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-7VNSF2LE6G');
-</script>
 </head>
 <body>
     <div class="container">
@@ -507,6 +520,13 @@
                     <div class="emotion-icon"><i class="fas fa-dizzy"></i></div>
                     <div class="emotion-label">חרד/ה</div>
                 </div>
+            </div>
+			
+			<div class="assessment-button-container">
+                <a href="mood-assessment.html" id="start-assessment-btn" class="btn-secondary">
+                    <i class="fas fa-clipboard-check"></i>
+                    לא בטוח/ה? עבור/י לשאלון
+                </a>
             </div>
             
             <div class="btn-group">
@@ -774,10 +794,44 @@
             
             refreshBtn.addEventListener('click', generateQuote);
             
-            // Initialize
-            checkForSavedUser();
-            showScreen(nameScreen);
-            updateProgressSteps(1);
+            // Function to get query parameters
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    // Initialize
+    checkForSavedUser();
+    let showQuoteParam = getQueryParam('showQuote');
+
+    if (showQuoteParam === 'true') {
+        // Get detected emotion from localStorage
+        const detectedEmotion = localStorage.getItem('detected_emotion');
+        if (detectedEmotion) {
+            selectedEmotion = detectedEmotion;
+
+            // Simulate selecting the emotion item (visually)
+            emotionItems.forEach(item => {
+                item.classList.remove('selected');
+                if (item.getAttribute('data-emotion') === detectedEmotion) {
+                    item.classList.add('selected');
+                }
+            });
+            emotionNextBtn.disabled = false;
+
+            showScreen(quoteScreen);
+            updateProgressSteps(3);
+            generateQuote();
+        } else {
+            // If no detected emotion, go to emotion screen
+            showScreen(emotionScreen);
+            updateProgressSteps(2);
+            generateDailyQuote();
+        }
+    } else {
+        showScreen(nameScreen); // Default to name screen if not showQuote
+        updateProgressSteps(1);
+    }
             
             // Allow pressing Enter to continue from name screen
             nameInput.addEventListener('keypress', function(e) {
