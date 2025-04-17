@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הערכת רגשות - משפטי חיזוק</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="icon.png" type="image/x-icon">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #4cc9f0;
+            --primary-dark: #3a0ca3;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 30%;
+            width: 70%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            border-radius: 0 0 10px 10px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 var(--primary-light);
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .question-number {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .answers-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .answer-option {
+            padding: 1rem;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: right;
+            font-size: 1.1rem;
+        }
+
+        .answer-option:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-light);
+            background-color: #f0f7ff;
+        }
+
+        .answer-option.selected {
+            border-color: var(--primary-color);
+            background-color: #ebf4ff;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.9rem 1.8rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #ebf4ff;
+            color: var(--primary-dark);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .results-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .result-emotion {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .card {
+                padding: 1.8rem;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+            }
+
+            .question-text {
+                font-size: 1.2rem;
+            }
+
+            .answer-option {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo"><i class="fas fa-heart-pulse"></i> הערכת רגשות</div>
+            <h1>שאלון הערכת רגשות</h1>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%;"></div>
+            </div>
+            
+            <!-- Question containers will be added here dynamically -->
+            <div id="questions-wrapper"></div>
+            
+            <!-- Results container (initially hidden) -->
+            <div id="results-container" class="results-container" style="display: none;">
+                <div class="result-emotion" id="result-emotion">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <div class="result-text" id="result-text">
+                    נראה שאתה מרגיש שמח היום!
+                </div>
+                
+                <button id="continue-to-quote-btn">
+                    המשך לציטוט
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            
+            <div class="btn-group" id="navigation-buttons">
+                <button id="back-btn" class="btn-secondary">
+                    <i class="fas fa-arrow-right"></i>
+                    חזרה
+                </button>
+                <button id="next-btn" disabled>
+                    הבא
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const questionsWrapper = document.getElementById('questions-wrapper');
+            const progressBar = document.getElementById('progress-bar');
+            const backBtn = document.getElementById('back-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const resultsContainer = document.getElementById('results-container');
+            const resultEmotion = document.getElementById('result-emotion');
+            const resultText = document.getElementById('result-text');
+            const continueToQuoteBtn = document.getElementById('continue-to-quote-btn');
+            const navigationButtons = document.getElementById('navigation-buttons');
+            
+            // Questions array
+            const questions = [
+                {
+                    question: "איך התחיל היום שלך?",
+                    answers: [
+                        { text: "התעוררתי מלא/ת אנרגיה ומוכן/ה ליום חדש", scores: { happy: 2, motivated: 1 } },
+                        { text: "התקשיתי לקום מהמיטה", scores: { tired: 2, sad: 1 } },
+                        { text: "התעוררתי עם חרדה לגבי משימות היום", scores: { anxious: 2, stressed: 1 } },
+                        { text: "רגיל, לא משהו מיוחד", scores: { confused: 1 } }
+                    ]
+                },
+                {
+                    question: "איך את/ה מתמודד/ת עם אתגרים היום?",
+                    answers: [
+                        { text: "אני רואה בהם הזדמנות לצמיחה", scores: { motivated: 2, happy: 1 } },
+                        { text: "אני מרגיש/ה שהם מציפים אותי", scores: { stressed: 2, anxious: 1 } },
+                        { text: "אני נמנע/ת מהם ככל האפשר", scores: { sad: 1, tired: 1, confused: 1 } },
+                        { text: "אני מתעצבן/ת בקלות כשדברים לא מסתדרים", scores: { angry: 2 } }
+                    ]
+                },
+                {
+                    question: "מה הרגשת כשנפגשת עם אנשים היום?",
+                    answers: [
+                        { text: "שמחתי לראות אותם ולשוחח", scores: { happy: 2, motivated: 1 } },
+                        { text: "הרגשתי לא נוח וחסר בטחון", scores: { anxious: 2, confused: 1 } },
+                        { text: "לא היה לי כוח לאינטראקציות חברתיות", scores: { tired: 2, sad: 1 } },
+                        { text: "הרגשתי שאנשים מעצבנים אותי", scores: { angry: 2, stressed: 1 } }
+                    ]
+                },
+                {
+                    question: "איך את/ה מתייחס/ת למשימות שלך היום?",
+                    answers: [
+                        { text: "אני מרגיש/ה מוכן/ה ומסוגל/ת להתמודד איתן", scores: { motivated: 2, happy: 1 } },
+                        { text: "אני מרגיש/ה מוצף/ת ולא בטוח/ה מאיפה להתחיל", scores: { confused: 2, anxious: 1 } },
+                        { text: "אני נמנע/ת מלעשות אותן כי אין לי מוטיבציה", scores: { sad: 2, tired: 1 } },
+                        { text: "אני מרגיש/ה לחוץ/ה מהדדליינים", scores: { stressed: 2, anxious: 1 } }
+                    ]
+                },
+                {
+                    question: "מה את/ה מרגיש/ה לגבי העתיד?",
+                    answers: [
+                        { text: "אופטימי/ת ומצפה לדברים טובים", scores: { happy: 2, motivated: 2 } },
+                        { text: "מודאג/ת ולא בטוח/ה מה יקרה", scores: { anxious: 2, confused: 1 } },
+                        { text: "לא רואה הרבה תקווה או שמחה בעתיד", scores: { sad: 2, tired: 1 } },
+                        { text: "מתוסכל/ת מכך שדברים לא משתפרים", scores: { angry: 2, stressed: 1 } }
+                    ]
+                },
+                {
+                    question: "איך את/ה מגיב/ה כשמשהו לא מסתדר כמו שתכננת?",
+                    answers: [
+                        { text: "מחפש/ת פתרונות ומתאים/ה את עצמי למצב", scores: { motivated: 2, happy: 1 } },
+                        { text: "נכנס/ת ללחץ ודאגה", scores: { anxious: 2, stressed: 1 } },
+                        { text: "מאבד/ת תקווה ומרגיש/ה מיואש/ת", scores: { sad: 2, tired: 1 } },
+                        { text: "מתעצבן/ת ומתוסכל/ת", scores: { angry: 2 } }
+                    ]
+                },
+                {
+                    question: "איך את/ה מרגיש/ה לגבי עצמך היום?",
+                    answers: [
+                        { text: "בטוח/ה בעצמי ומרוצה ממי שאני", scores: { happy: 2, motivated: 1 } },
+                        { text: "לא בטוח/ה, יש לי הרבה ספקות עצמיים", scores: { anxious: 2, confused: 1 } },
+                        { text: "מאוכזב/ת מעצמי", scores: { sad: 2, tired: 1 } },
+                        { text: "מתוסכל/ת מהמגבלות שלי", scores: { angry: 1, stressed: 1 } }
+                    ]
+                },
+                {
+                    question: "איך המצב הגופני שלך היום?",
+                    answers: [
+                        { text: "אנרגטי/ת ובכושר טוב", scores: { happy: 1, motivated: 2 } },
+                        { text: "עייף/ה וחסר/ת אנרגיה", scores: { tired: 2, sad: 1 } },
+                        { text: "מתח שרירים, כאבי ראש או תחושה פיזית לא נוחה", scores: { stressed: 2, anxious: 1 } },
+                        { text: "חסר/ת מנוחה או קשה להתרכז", scores: { confused: 2, angry: 1 } }
+                    ]
+                },
+                {
+                    question: "כיצד את/ה מתייחס/ת למחשבות שלך היום?",
+                    answers: [
+                        { text: "ברורות וממוקדות", scores: { motivated: 2, happy: 1 } },
+                        { text: "קשה לי להתרכז, המחשבות קופצות", scores: { confused: 2, anxious: 1 } },
+                        { text: "שליליות ברובן", scores: { sad: 2, tired: 1 } },
+                        { text: "לחוצות ומהירות", scores: { stressed: 2, angry: 1 } }
+                    ]
+                },
+                {
+                    question: "מה תרצה/י לעשות עכשיו יותר מכל?",
+                    answers: [
+                        { text: "לעבוד על מטרות או תחביבים שלי", scores: { motivated: 2, happy: 1 } },
+                        { text: "לנוח או לישון", scores: { tired: 2, sad: 1 } },
+                        { text: "להתבודד ולהיות לבד", scores: { sad: 1, anxious: 1, confused: 1 } },
+                        { text: "לעשות משהו פיזי כדי לפרוק מתח", scores: { stressed: 1, angry: 2 } }
+                    ]
+                }
+            ];
+            
+            // State variables
+            let currentQuestionIndex = 0;
+            let selectedAnswers = [];
+            let emotionScores = {
+                happy: 0,
+                sad: 0,
+                stressed: 0,
+                tired: 0,
+                confused: 0,
+                motivated: 0,
+                angry: 0,
+                anxious: 0
+            };
+            
+            // Icons for each emotion
+            const emotionIcons = {
+                happy: '<i class="fas fa-smile"></i>',
+                sad: '<i class="fas fa-sad-tear"></i>',
+                stressed: '<i class="fas fa-tired"></i>',
+                tired: '<i class="fas fa-bed"></i>',
+                confused: '<i class="fas fa-question-circle"></i>',
+                motivated: '<i class="fas fa-bullseye"></i>',
+                angry: '<i class="fas fa-angry"></i>',
+                anxious: '<i class="fas fa-dizzy"></i>'
+            };
+            
+            // Emotion descriptions
+            const emotionDescriptions = {
+                happy: "נראה שאת/ה מרגיש/ה שמח/ה ואופטימי/ת!",
+                sad: "נראה שאת/ה מרגיש/ה קצת עצוב/ה היום.",
+                stressed: "נראה שאת/ה חווה/ת לחץ משמעותי כרגע.",
+                tired: "נראה שאת/ה מרגיש/ה עייפות משמעותית.",
+                confused: "נראה שאת/ה מרגיש/ה קצת מבולבל/ת או חסר/ת בהירות.",
+                motivated: "נראה שאת/ה מלא/ת מוטיבציה ורצון להתקדם!",
+                angry: "נראה שאת/ה חווה/ת כעס או תסכול משמעותי.",
+                anxious: "נראה שאת/ה מרגיש/ה חרדה או דאגה."
+            };
+            
+            // Initialize questions
+            function initQuestions() {
+                questionsWrapper.innerHTML = '';
+                
+                // Create question containers
+                questions.forEach((q, index) => {
+                    const questionContainer = document.createElement('div');
+                    questionContainer.className = 'question-container';
+                    questionContainer.id = `question-${index}`;
+                    
+                    if (index === 0) {
+                        questionContainer.classList.add('active');
+                    }
+                    
+                    // Question number
+                    const questionNumber = document.createElement('div');
+                    questionNumber.className = 'question-number';
+                    questionNumber.textContent = `שאלה ${index + 1} מתוך ${questions.length}`;
+                    
+                    // Question text
+                    const questionText = document.createElement('div');
+                    questionText.className = 'question-text';
+                    questionText.textContent = q.question;
+                    
+                    // Answers container
+                    const answersContainer = document.createElement('div');
+                    answersContainer.className = 'answers-container';
+                    
+                    // Create answer options
+                    q.answers.forEach((answer, ansIndex) => {
+                        const answerOption = document.createElement('div');
+                        answerOption.className = 'answer-option';
+                        answerOption.textContent = answer.text;
+                        answerOption.dataset.index = ansIndex;
+                        
+                        answerOption.addEventListener('click', function() {
+                            // Remove selected class from all options in this question
+                            this.parentNode.querySelectorAll('.answer-option').forEach(opt => {
+                                opt.classList.remove('selected');
+                            });
+                            
+                            // Add selected class to this option
+                            this.classList.add('selected');
+                            
+                            // Store the answer
+                            selectedAnswers[index] = ansIndex;
+                            
+                            // Enable next button if an answer is selected
+                            nextBtn.disabled = false;
+                        });
+                        
+                        answersContainer.appendChild(answerOption);
+                    });
+                    
+                    // Append all elements to question container
+                    questionContainer.appendChild(questionNumber);
+                    questionContainer.appendChild(questionText);
+                    questionContainer.appendChild(answersContainer);
+                    
+                    // Append to questions wrapper
+                    questionsWrapper.appendChild(questionContainer);
+                });
+            }
+            
+            // Show a specific question
+            function showQuestion(index) {
+                // Hide all questions
+                document.querySelectorAll('.question-container').forEach(q => {
+                    q.classList.remove('active');
+                });
+                
+                // Show the current question
+                document.getElementById(`question-${index}`).classList.add('active');
+                
+                // Update progress bar
+                const progress = ((index + 1) / questions.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // Update button states
+                backBtn.disabled = index === 0;
+                nextBtn.disabled = selectedAnswers[index] === undefined;
+                
+                // Update current question index
+                currentQuestionIndex = index;
+            }
+            
+            // Calculate results based on answers
+            function calculateResults() {
+                // Reset scores
+                Object.keys(emotionScores).forEach(key => {
+                    emotionScores[key] = 0;
+                });
+                
+                // Calculate scores based on selected answers
+                selectedAnswers.forEach((answerIndex, questionIndex) => {
+                    const selectedAnswer = questions[questionIndex].answers[answerIndex];
+                    
+                    // Add scores for each emotion
+                    Object.entries(selectedAnswer.scores).forEach(([emotion, score]) => {
+                        emotionScores[emotion] += score;
+                    });
+                });
+                
+                // Find the highest scoring emotion
+                let highestEmotion = 'happy'; // Default
+                let highestScore = -1;
+                
+                Object.entries(emotionScores).forEach(([emotion, score]) => {
+                    if (score > highestScore) {
+                        highestScore = score;
+                        highestEmotion = emotion;
+                    }
+                });
+                
+                return highestEmotion;
+            }
+            
+            // Show results
+            function showResults() {
+                // Hide questions and nav buttons
+                document.querySelectorAll('.question-container').forEach(q => {
+                    q.classList.remove('active');
+                });
+                navigationButtons.style.display = 'none';
+                
+                // Calculate dominant emotion
+                const dominantEmotion = calculateResults();
+                
+                // Update results
+                resultEmotion.innerHTML = emotionIcons[dominantEmotion];
+                resultText.textContent = emotionDescriptions[dominantEmotion];
+                
+                // Store the dominant emotion to use in quote page
+                localStorage.setItem('detected_emotion', dominantEmotion);
+                
+                // Show results
+                resultsContainer.style.display = 'block';
+            }
+            
+            // Event listeners
+            backBtn.addEventListener('click', function() {
+                if (currentQuestionIndex > 0) {
+                    showQuestion(currentQuestionIndex - 1);
+                } else {
+                    // אם אנחנו בשאלה הראשונה (אינדקס 0), חזור למסך בחירת הרגשות
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                // If this is the last question, show results
+                if (currentQuestionIndex === questions.length - 1) {
+                    showResults();
+                } else {
+                    // Otherwise, move to next question
+                    showQuestion(currentQuestionIndex + 1);
+                }
+            });
+            
+            continueToQuoteBtn.addEventListener('click', function() {
+                // Return to main application and go to quote page
+                window.location.href = 'index.html?showQuote=true';
+            });
+            
+            // Initialize
+            initQuestions();
+            showQuestion(0);
+        });
+    </script>
+</body>
+</html>
